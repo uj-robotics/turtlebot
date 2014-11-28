@@ -121,7 +121,7 @@ if __name__=="__main__":
                 client.send(data)
             client.close()
             key = getKey()
-            if data != None or data != '':
+            if data != None and data != '' and (data in moveBindings.keys() or data in speedBindings.keys()):
                 key = data
             if key in moveBindings.keys():
                 x = moveBindings[key][0]
