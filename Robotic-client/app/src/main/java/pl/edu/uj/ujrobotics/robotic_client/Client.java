@@ -2,33 +2,38 @@ package pl.edu.uj.ujrobotics.robotic_client;
 
 import android.util.Log;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Iterator;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Created by piotr on 25.11.14.
  */
-public class Client implements Runnable{
+public class Client implements Runnable {
     private String ip;
     private int port;
     private Socket clientSocket;
+    private command cmd;
 
-    public Client(String ip, int port) {
+    public Client(String ip, int port, command cmd) {
         this.ip = ip;
         this.port = port;
+        this.cmd = cmd;
     }
 
     public void bind() {
         try {
             clientSocket = new Socket(this.ip, port);
         } catch (IOException e) {
-           Log.e("CLIENT", "I cannot bind socket to this IP : " + ip + ":" + port + "\n" + e.toString());
+            Log.e("CLIENT", "I cannot bind socket to this IP : " + ip + ":" + port + "\n" + e.toString());
             //close();
         }
     }
 
-    public void send(command cmd){
+    public void send(command cmd) {
         try {
             DataOutputStream dout = new DataOutputStream(clientSocket.getOutputStream());
             dout.writeChar(cmd.getCommand());
@@ -37,7 +42,7 @@ public class Client implements Runnable{
         }
     }
 
-    public void close(){
+    public void close() {
         try {
             clientSocket.close();
         } catch (IOException e) {
@@ -48,7 +53,16 @@ public class Client implements Runnable{
 
     @Override
     public void run() {
-        bind();
-        send(command.LEFT_1);
+        Log.e(":D", "ZBindowane");
+            try {
+                clientSocket = new Socket(this.ip, port);
+                Log.e("Send command", cmd.getCommand() +"");
+                send(cmd);
+                DataInputStream dIn = new DataInputStream(this.clientSocket.getInputStream());
+                Log.e("Recv", dIn.readChar() + "");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
     }
 }

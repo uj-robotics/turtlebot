@@ -119,10 +119,11 @@ if __name__=="__main__":
             data = client.recv(size)
             if data :
                 client.send(data)
-            client.close()
+#            client.close()
             key = getKey()
             if data != None and data != '' and (data in moveBindings.keys() or data in speedBindings.keys()):
-                key = data
+                key = data 
+            print "Received: ", key
             if key in moveBindings.keys():
                 x = moveBindings[key][0]
                 th = moveBindings[key][1]
