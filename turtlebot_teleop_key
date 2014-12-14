@@ -71,7 +71,10 @@ speedBindings={
         'e':(1,1.1),
         'c':(1,.9),
           }
+import subprocess
 
+def play(audio_file_path):
+    subprocess.call(["ffplay", "-nodisp", "-autoexit", audio_file_path])
 def getKey():
     tty.setraw(sys.stdin.fileno())
     rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
@@ -119,8 +122,10 @@ if __name__=="__main__":
             data = client.recv(size)
             if data :
                 client.send(data)
-#            client.close()
+            client.close()
             key = getKey()
+            if data == 'S':
+                play("/home/ros/R2D2.mp3")
             if data != None and data != '' and (data in moveBindings.keys() or data in speedBindings.keys()):
                 key = data 
             print "Received: ", key
