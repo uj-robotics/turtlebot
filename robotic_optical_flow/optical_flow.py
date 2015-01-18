@@ -1,10 +1,10 @@
 import numpy as np
 import cv2
 
-cap = cv2.VideoCapture(0) #video captute
+cap = cv2.VideoCapture(0)
 
 # params for ShiTomasi corner detection
-feature_params = dict( maxCorners = 100, #corner detection
+feature_params = dict( maxCorners = 100,
                        qualityLevel = 0.3,
                        minDistance = 7,
                        blockSize = 7 )
