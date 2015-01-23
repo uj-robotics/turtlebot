@@ -6,13 +6,13 @@ import cv2
 import video
 import socket
 import time
-
+from client import *
 
 global old_fx
 global old_fy
 global it
 it = 0
-host = '192.168.0.107'
+host = '192.168.0.110'
 port = 50000
 size = 1024
 
@@ -25,34 +25,29 @@ TAIL = 3
 
 RIGHT_THRESHOLD = 10.0
 LEFT_THRESHOLD = -10.0
-UP_THRESHOLD = 10.0
-DOWN_THRESHOLD = -10.0
+UP_THRESHOLD = 8.0
+DOWN_THRESHOLD = -8.0
 
-MOTION = 4
+MOTION = 5
+_MOTION = 6
 
-def send(cmd):
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((host, port))
-    s.send(cmd)
-    s.recv(size)
-    s.close()
-
+client = Client()
 
 def _process(cmd):
     c = 'k'  # stop
     if cmd == HEAD:
-        print "UP"
+        print "COFNALES SIE"
         c = 'i'
     elif cmd == TAIL:
-        print "DOWN"
-        c = '.'
-    elif cmd == LEFT:
-        print "LEFT"
+        print " ZA BLISKO!!"
+        c = ','
+    if cmd == LEFT:
+        print "LEWO"
         c = 'j'
     elif cmd == RIGHT:
-        print "RIGHT"
-        c = 'm'
-        # send(c)
+        print "PRAWO"
+        c = 'l'
+    client.run(c)
 
 
 def calculate_percentage(list):
@@ -75,24 +70,35 @@ def draw_flow(img, flow, step=16):
     global cmd_list,it
     if (max(fx) > RIGHT_THRESHOLD):
         cmd_list[RIGHT] += 1
+     #   _process(RIGHT)
     if (min(fx) < LEFT_THRESHOLD):
         cmd_list[LEFT] += 1
+      #  _process(LEFT)
     if (max(fy) > UP_THRESHOLD):
         cmd_list[HEAD] += 1
     if (min(fy) < DOWN_THRESHOLD):
         cmd_list[TAIL] += 1
-
-    _max = cmd_list[0]
-    index = 0
-    for i in range(len(cmd_list)):
-        if _max < cmd_list[i]:
-            _max = cmd_list[i]
-            index = i
-    if _max > MOTION:
-        #print cmd_list
-        _process(index)
-        cmd_list = [0,0,0,0]
-        #cmd_list[index] = 0
+    # tmp = cmd_list[0]
+    # index = 0
+    # for i in range(len(cmd_list)):
+    #     if cmd_list[i] > tmp:
+    #         tmp = cmd_list
+    #         index = i
+    # if tmp > RIGHT_THRESHOLD:
+    #     cmd_list = [0,0,0,0]
+    #     _process(index)
+    if (cmd_list[RIGHT] > cmd_list[LEFT] and cmd_list[RIGHT] > MOTION):
+        cmd_list[LEFT] = cmd_list[RIGHT] = 0
+        _process(RIGHT)
+    elif(cmd_list[LEFT] > cmd_list[RIGHT] and cmd_list[LEFT] > MOTION):
+        cmd_list[LEFT] = cmd_list[RIGHT] = 0
+        _process(LEFT)
+    if (cmd_list[HEAD] > cmd_list[TAIL] and cmd_list[HEAD] > _MOTION):
+        cmd_list[HEAD] = cmd_list[TAIL] = 0
+        _process(HEAD)
+    elif (cmd_list[TAIL] > cmd_list[HEAD] and cmd_list[TAIL] > _MOTION):
+        cmd_list[HEAD] = cmd_list[TAIL] = 0
+        _process(TAIL)
     lines = np.vstack([x, y, x + fx, y + fy]).T.reshape(-1, 2, 2)
 
     lines = np.int32(lines + 0.5)
@@ -127,13 +133,24 @@ if __name__ == '__main__':
         # prev – first 8-bit single-channel input image
         # next – second input image of the same size and the same type as prev.
         # flow – computed flow image that has the same size as prev and type CV_32FC2.
-        # pyr_scale – parameter, specifying the image scale (<1) to build pyramids for each image; pyr_scale=0.5 means a classical pyramid, where each next layer is twice smaller than the previous one.
-        # levels – number of pyramid layers including the initial image; levels=1 means that no extra layers are created and only the original images are used.
-        # winsize – averaging window size; larger values increase the algorithm robustness to image noise and give more chances for fast motion detection, but yield more blurred motion field.
+        # pyr_scale – parameter, specifying the image scale (<1) to build pyramids for each image;
+        #pyr_scale=0.5 means a classical pyramid, where each next layer is twice smaller than the previous one.
+        # levels – number of pyramid layers including the initial image; levels=1 means that no
+        # extra layers are created and only the original images are used.
+        # winsize – averaging window size; larger values increase the algorithm
+        #robustness to image noise and give more chances for fast motion detection, but yield more blurred motion field.
         # iterations – number of iterations the algorithm does at each pyramid level.
-        # poly_n – size of the pixel neighborhood used to find polynomial expansion in each pixel; larger values mean that the image will be approximated with smoother surfaces, yielding more robust algorithm and more blurred motion field, typically poly_n =5 or 7.
+        # poly_n – size of the pixel neighborhood used to find polynomial expansion in each pixel;
+        #larger values mean that the image will be approximated with smoother surfaces, yielding
+        #more robust algorithm and more blurred motion field, typically poly_n =5 or 7.
         # poly_sigma – standard deviation of the Gaussian that is used to smooth derivatives used as a basis for the polynomial expansion; for poly_n=5, you can set poly_sigma=1.1, for poly_n=7, a good value would be poly_sigma=1.5.
-        # flags –
+        # flags – default
+        #0.5 scale for pyramide
+        #3<pyramide
+        #15-windows size
+        #5<-iteration
+        #5 <-  poly_n
+        #1.2 <- sigma
         flow = cv2.calcOpticalFlowFarneback(prevgray, gray, 0.5, 3, 15, 3, 5, 1.2, 0)
         prevgray = gray
         cv2.imshow('flow', draw_flow(gray, flow))
