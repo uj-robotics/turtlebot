@@ -28,8 +28,8 @@ LEFT_THRESHOLD = -10.0
 UP_THRESHOLD = 8.0
 DOWN_THRESHOLD = -8.0
 
-MOTION = 5
-_MOTION = 6
+MOTION = 1
+_MOTION = 1
 
 client = Client()
 
@@ -63,20 +63,23 @@ def calculate_percentage(list):
     return statistic, statistic1
 
 
+def avg(list):
+    return reduce(lambda x, y: x + y, list) / len(list)
+
 def draw_flow(img, flow, step=16):
     h, w = img.shape[:2]  # zwraca rozmiar obrazka
     y, x = np.mgrid[step / 2:h:step, step / 2:w:step].reshape(2, -1)
     fx, fy = flow[y, x].T
     global cmd_list,it
-    if (max(fx) > RIGHT_THRESHOLD):
+    if (avg(fx) > 1.0):
         cmd_list[RIGHT] += 1
      #   _process(RIGHT)
-    if (min(fx) < LEFT_THRESHOLD):
+    if (avg(fx) < -1.0):
         cmd_list[LEFT] += 1
       #  _process(LEFT)
-    if (max(fy) > UP_THRESHOLD):
+    if (avg(fy) > 1.0):
         cmd_list[HEAD] += 1
-    if (min(fy) < DOWN_THRESHOLD):
+    if (avg(fy) < -1.0):
         cmd_list[TAIL] += 1
     # tmp = cmd_list[0]
     # index = 0

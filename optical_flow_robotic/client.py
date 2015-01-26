@@ -9,7 +9,7 @@ import sys
 import time
 
 
-host = '192.168.0.110'
+host = '192.168.0.114'
 port = 50000
 size = 1024
 
@@ -48,4 +48,3 @@ class Client(object):
                 for i in range(22):
                     self.send(c)
             self.prev = c
-
