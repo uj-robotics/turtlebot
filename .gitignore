@@ -4,3 +4,7 @@
 *.class
 .idea
 .idea/*
+build/
+*.bin
+*.o
+*.out
