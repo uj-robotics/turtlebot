@@ -5,6 +5,7 @@ import android.util.Log;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
@@ -22,7 +23,7 @@ public class Client implements Runnable {
         this.ip = ip;
         this.port = port;
         this.cmd = cmd;
-        Log.e("ADRESS: ", ip + " " + port);
+        Log.e("ADRESS: ", ip + ":" + port);
     }
 
     public void bind() {
@@ -54,11 +55,11 @@ public class Client implements Runnable {
 
     @Override
     public void run() {
-        Log.e(":D", "ZBindowane");
         try {
-            Log.e("ADDRESS", "SEND");
-            bind();
-            send(cmd);
+            Log.e("I send ", "SEND" + cmd.charAt(0));
+            clientSocket = new Socket(this.ip, port);
+            OutputStream socketOutputStream = clientSocket.getOutputStream();
+            socketOutputStream.write(cmd.charAt(0));
             DataInputStream dIn = new DataInputStream(this.clientSocket.getInputStream());
             Log.e("Recv", dIn.readChar() + "");
         } catch (Exception e) {

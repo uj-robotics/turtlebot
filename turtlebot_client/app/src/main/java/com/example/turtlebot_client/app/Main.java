@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.DropBoxManager;
 import android.util.Log;
@@ -25,7 +26,7 @@ import java.util.regex.Pattern;
 public class Main extends Activity {
 
     private HashMap<Button, String> commands = new HashMap<Button, String>();
-    private String HOST = "";
+    private String HOST = "192.168.0.5";
     private Integer PORT = 50000;
 
     private static final String IPADDRESS_PATTERN =
@@ -61,16 +62,21 @@ public class Main extends Activity {
         setContentView(R.layout.activity_main);
         prepare_cmd_buttons();
         for (Map.Entry entry: commands.entrySet()){
-            Button button = (Button) entry.getKey();
+            final Button button = (Button) entry.getKey();
             final String cmd = (String) entry.getValue();
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (validate(HOST)) {
-                        new Thread(new Client(HOST, PORT, cmd)).start();
-                        Toast.makeText(getApplicationContext(), cmd, Toast.LENGTH_LONG).show();
+                    WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+                    if (wifi == null || !wifi.isWifiEnabled()){
+                        Toast.makeText(getApplicationContext(), "TURN ON WIFI!", Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(getApplicationContext(), "Please set turtlebot ip in settings", Toast.LENGTH_LONG).show();
+                        if (validate(HOST)) {
+                            Log.e("CMD", cmd + " !! " + button.getText().toString());
+                            new Thread(new Client(HOST, PORT, cmd)).start();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Please set turtlebot ip in settings", Toast.LENGTH_LONG).show();
+                        }
                     }
                 }
             });
@@ -87,6 +93,7 @@ public class Main extends Activity {
 
         final EditText server_ip = (EditText) promptsView
                 .findViewById(R.id.server_ip);
+        server_ip.setText(HOST);
         final EditText port = (EditText) promptsView.findViewById(R.id.port);
         // set dialog message
         alertDialogBuilder
