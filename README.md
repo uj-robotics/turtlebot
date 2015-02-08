@@ -1,33 +1,6 @@
 ##STRUCTURE:##
 
-.
-├── biblioteka.md
-├── client.py
-├── color_tracker
-│   ├── CMakeLists.txt
-│   └── main.cpp
-├── hand_gesture
-│   ├── CMakeCache.txt
-│   ├── CMakeFiles
-│   ├── cmake_install.cmake
-│   ├── CMakeLists.txt
-│   ├── DisplayImage
-│   ├── hand.cpp
-│   └── Makefile
-├── optical_flow_robotic
-│   ├── client.py
-│   ├── client.pyc
-│   ├── common.py
-│   ├── common.pyc
-│   ├── opt_flow.py
-│   ├── video.py
-│   └── video.pyc
-├── README.md
-├── tester
-│   └── main.py
-├── test_keyboard.py
-├── turtlebot_client
-├── turtlebot_teleop_key
+!Structure[Structure](structure.png) 
 
 
 This project contains few modules : 
