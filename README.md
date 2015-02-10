@@ -5,16 +5,16 @@
 
 This project contains few modules : 
 
-* color_tracker - Track the movement of red ball with using laptop camera and red ball. So you can control the movement of turtlebot with using red ball.
+* color_tracker - Simple color tracker for red ball.
 
-* optical_flow_robotic -> In this module you can find a implementation of optical flow to control turtlebot.
+* optical_flow_robotic -> Simple Object Follower implemented with optical flow algorithm.
 * tester -> sample python server for testing our clients in java/c++/python
 
 * test_keyboard.py -> sample python script to test keyboard
 
 * turtlebot_client -> python script to control turtlebot from laptop with using keyboard
 
-* turtlebot_teleop_key -> Our server on robot side to control movement
+* turtlebot_teleop_key -> Our server on robot side to control wheels.
 
 #Configuration#
 
