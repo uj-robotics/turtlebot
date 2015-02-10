@@ -159,7 +159,14 @@
                 android:layout_margin="2dp"
                 android:id="@+id/z"
                 style="@style/btnStyleBeige"/>
-
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0.80"
+            android:text="R2D2"
+            android:layout_margin="2dp"
+            android:id="@+id/music"
+            style="@style/btnStyleBeige"/>
     </LinearLayout>
 
 </RelativeLayout>

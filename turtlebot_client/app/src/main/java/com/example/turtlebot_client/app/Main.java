@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -54,6 +55,7 @@ public class Main extends Activity {
         commands.put((Button) findViewById(R.id.space_or_k), " ");
         commands.put((Button) findViewById(R.id.u), "u");
         commands.put((Button) findViewById(R.id.z), "z");
+        commands.put((Button) findViewById(R.id.music), "S");
     }
 
     @Override
@@ -64,20 +66,52 @@ public class Main extends Activity {
         for (Map.Entry entry: commands.entrySet()){
             final Button button = (Button) entry.getKey();
             final String cmd = (String) entry.getValue();
-            button.setOnClickListener(new View.OnClickListener() {
+//            button.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+//                    if (wifi == null || !wifi.isWifiEnabled()){
+//                        Toast.makeText(getApplicationContext(), "TURN ON WIFI!", Toast.LENGTH_LONG).show();
+//                    } else {
+//                        if (validate(HOST)) {
+//                            Log.e("CMD", cmd + " !! " + button.getText().toString());
+//                            new Thread(new Client(HOST, PORT, cmd)).start();
+//                        } else {
+//                            Toast.makeText(getApplicationContext(), "Please set turtlebot ip in settings", Toast.LENGTH_LONG).show();
+//                        }
+//                    }
+//                }
+//            });
+
+            // this goes wherever you setup your button listener:
+            button.setOnTouchListener(new View.OnTouchListener() {
+                long lastDown;
+                long lastDuration;
+                boolean flag = true;
+                Thread t = null;
                 @Override
-                public void onClick(View v) {
-                    WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
-                    if (wifi == null || !wifi.isWifiEnabled()){
-                        Toast.makeText(getApplicationContext(), "TURN ON WIFI!", Toast.LENGTH_LONG).show();
-                    } else {
-                        if (validate(HOST)) {
-                            Log.e("CMD", cmd + " !! " + button.getText().toString());
-                            new Thread(new Client(HOST, PORT, cmd)).start();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Please set turtlebot ip in settings", Toast.LENGTH_LONG).show();
-                        }
+                public boolean onTouch(View v, MotionEvent event) {
+                    if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                            lastDown = System.currentTimeMillis();
+                            WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+                            if (wifi == null || !wifi.isWifiEnabled()) {
+                                Toast.makeText(getApplicationContext(), "TURN ON WIFI!", Toast.LENGTH_LONG).show();
+                            } else {
+                                if (validate(HOST)) {
+                                    Log.e("CMD", cmd + " !! " + button.getText().toString());
+                                    t = new Thread(new Client(HOST, PORT, cmd));
+                                    t.start();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Please set turtlebot ip in settings", Toast.LENGTH_LONG).show();
+
+                                }
+                            }
+                    } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                        flag = false;
+                        lastDuration = System.currentTimeMillis() - lastDown;
+                        t.interrupt();
                     }
+                    return false;
                 }
             });
         }

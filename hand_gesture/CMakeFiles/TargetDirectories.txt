@@ -1,1 +1,0 @@
-/home/piotr/Projects/individual-project/hand_gesture/CMakeFiles/DisplayImage.dir

@@ -18,6 +18,14 @@ public class Client implements Runnable {
     private int port;
     private Socket clientSocket;
     private String cmd;
+    Thread backgroundThread;
+
+    public void start() {
+        if (backgroundThread == null) {
+            backgroundThread = new Thread(this);
+            backgroundThread.start();
+        }
+    }
 
     public Client(String ip, int port, String cmd) {
         this.ip = ip;
@@ -55,16 +63,32 @@ public class Client implements Runnable {
 
     @Override
     public void run() {
-        try {
-            Log.e("I send ", "SEND" + cmd.charAt(0));
-            clientSocket = new Socket(this.ip, port);
-            OutputStream socketOutputStream = clientSocket.getOutputStream();
-            socketOutputStream.write(cmd.charAt(0));
-            DataInputStream dIn = new DataInputStream(this.clientSocket.getInputStream());
-            Log.e("Recv", dIn.readChar() + "");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
+        try {
+            while (!backgroundThread.interrupted()) {
+                try {
+                    Log.e("I send ", "SEND" + cmd.charAt(0));
+                    clientSocket = new Socket(this.ip, port);
+                    OutputStream socketOutputStream = clientSocket.getOutputStream();
+                    socketOutputStream.write(cmd.charAt(0));
+                    DataInputStream dIn = new DataInputStream(this.clientSocket.getInputStream());
+                    Log.e("Recv", dIn.readChar() + "");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (Exception ex) {
+            // important you respond to the InterruptedException and stop processing
+            // when its thrown!  Notice this is outside the while loop.
+            Log.i("Thread interrupter", "Thread shutting down as it was requested to stop.");
+        } finally {
+            backgroundThread = null;
+        }
+    }
+
+    public void stop() {
+        if( backgroundThread != null ) {
+            backgroundThread.interrupt();
+        }
     }
 }

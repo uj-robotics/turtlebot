@@ -7,7 +7,7 @@ A simple echo client
 import socket
 import sys
 
-host = '192.168.0.5'
+host = '192.168.0.114'
 port = 50000
 size = 1024
 print "Movement\nu i o \nj k l \nm , .\nspeed q/z\nlinear speed w/x\nangular speed e/c\nSTOP-> SPACE KEY/K"
