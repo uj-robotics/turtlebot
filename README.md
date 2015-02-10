@@ -1,6 +1,6 @@
 ##STRUCTURE:##
 
-!Structure[Structure](structure.png) 
+![ ](images/structure.png  "Structure")
 
 
 This project contains few modules : 
