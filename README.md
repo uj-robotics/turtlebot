@@ -7,8 +7,6 @@ This project contains few modules :
 
 * color_tracker - Track the movement of red ball with using laptop camera and red ball. So you can control the movement of turtlebot with using red ball.
 
-* hand_gesture - hand recognition sample -> not connected to turtlebot.
-
 * optical_flow_robotic -> In this module you can find a implementation of optical flow to control turtlebot.
 * tester -> sample python server for testing our clients in java/c++/python
 
