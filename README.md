@@ -12,7 +12,7 @@ This project contains few modules :
 
 * test_keyboard.py -> sample python script to test keyboard
 
-*face_detecting.py -> simple face detecting, first download these files before use: https://github.com/Itseez/opencv/tree/master/data/haarcascades
+* face_detecting.py -> simple face detecting, first download these files before use: https://github.com/Itseez/opencv/tree/master/data/haarcascades
 
 * turtlebot_client -> python script to control turtlebot from laptop with using keyboard
 
